@@ -33,7 +33,9 @@ datasets = ['cnn','dailymail']
 df = defaultdict(list)
 fw = open('{}/{}'.format(root_dir,outfile),'w')
 for dataset in datasets:
+    print("start merge {} data ...".format(dataset))
     working_dir = os.path.join(root_dir, dataset)
+    print(working_dir)
     files = glob('{}/article_spacy_line/*'.format(working_dir))
     print(len(files))
     filter_files = [k.strip() for k in open(filter_file).readlines()]
@@ -75,7 +77,7 @@ for dataset in datasets:
 
         fw.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n'.format(article_line,article_pos,article_ner,title_line,title_pos,title_ner,highlight_line,highlight_pos,highlight_ner))
 
-    fw.close()
+fw.close()
 
 dt = pd.DataFrame.from_dict(df,orient='columns')
 train, validate, test = np.split(dt.sample(frac=1), [int(.8*len(dt)), int(.1*len(dt))])
@@ -85,6 +87,7 @@ data['train'] = train
 data['dev'] = validate
 data['test'] = test
 
+print("start training ...")
 vocab = Counter()
 for filetype in ['train','dev','test']:
     writer = open('{}/{}.bin'.format(root_dir,filetype), 'wb')

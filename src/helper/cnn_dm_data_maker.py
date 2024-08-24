@@ -5,9 +5,10 @@
 import os, sys
 from glob import glob
 import spacy
-nlp = spacy.load('en')
+#nlp = spacy.load('en')
+nlp = spacy.load("en_core_web_sm")
 import errno
-from multiprocessing import Pool, cpu_counts
+from multiprocessing import Pool, cpu_count
 from unidecode import unidecode
 
 def mkdir_p(path):
@@ -31,7 +32,7 @@ def run(fl):
     text = '\n'.join(text.split('\n'))
     doc = nlp.make_doc(remove_non_ascii(text))
 
-    for proc in nlp.pipeline:
+    for name,proc in nlp.pipeline:
         doc = proc(doc)
 
     fwl = open('{}/{}'.format(linedir, filename),'w')
@@ -109,6 +110,6 @@ mkdir_p(nerdir)
 filelist = glob('{}/*'.format(article_dir))
 print('processing {} files...'.format(len(filelist)))
 
-pool = Pool(cpu_counts())
+pool = Pool(cpu_count())
 pool.map(run, filelist)
 pool.close()
